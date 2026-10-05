@@ -14,6 +14,8 @@ use toolbox::error::Error;
 use toolbox::result::Result;
 
 const COMMANDS: &[&str] = &[
+    #[cfg(target_os = "macos")]
+    "cmd/7z/macos",
     "cmd/docker",
     #[cfg(target_os = "linux")]
     "cmd/firewallctl/linux",
@@ -31,7 +33,7 @@ const COMMANDS: &[&str] = &[
     "cmd/renet/windows",
     "cmd/reviso",
     #[cfg(target_os = "macos")]
-    "cmd/rmdss/darwin",
+    "cmd/rmdss/macos",
     "cmd/rmem",
     "cmd/sqlite",
     "cmd/unhide",

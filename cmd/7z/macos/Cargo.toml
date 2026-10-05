@@ -1,13 +1,12 @@
 [package]
-name = "toolbox-rmdss-darwin"
+name = "toolbox-7z-macos"
 edition = "2024"
 license.workspace = true
 version.workspace = true
 
 [[bin]]
-name = "rmdss"
+name = "7z"
 path = "src/main.rs"
 
 [dependencies]
-clap.workspace = true
 toolbox.workspace = true

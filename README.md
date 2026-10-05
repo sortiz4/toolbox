@@ -26,6 +26,7 @@ cargo run -p toolbox-build -- --output ./bin
 ## Commands
 | Command | What it does | Platforms |
 | --- | --- | --- |
+| `7z` | Runs `7zz`. | MacOS |
 | `docker` | Runs `podman`. | All |
 | `firewallctl` | Runs `firewall-cmd`. | Linux |
 | `grean` | Runs `grean` from `lib/grean-2.0.5/bin/` beside the wrapper. I update that path when needed. | All |
@@ -35,7 +36,7 @@ cargo run -p toolbox-build -- --output ./bin
 | `pyclean` | Removes Python cache directories and `.pyc`/`.pyo` files beneath the supplied roots. Defaults to the current directory. | All |
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
 | `renet` | Runs `ipconfig /flushdns`, `/release`, and `/renew`, even if an earlier step fails. | Windows |
-| `reviso` | Runs `reviso` from `lib/reviso-2.1.0/bin/` beside the wrapper. I update that path when needed. | All |
+| `reviso` | Runs `reviso` from `lib/reviso-2.2.5/bin/` beside the wrapper. I update that path when needed. | All |
 | `rmdss` | Removes `.DS_Store` files beneath the supplied roots. Defaults to the current directory. | MacOS |
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
 | `sqlite` | Runs `sqlite3`. | All |

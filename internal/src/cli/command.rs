@@ -27,6 +27,7 @@ use walkdir::WalkDir;
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(ClapArguments)]
+#[group(skip)]
 pub struct Arguments {
     /// Show this message.
     #[arg(short, long)]

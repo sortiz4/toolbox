@@ -2,6 +2,7 @@
 resolver = "3"
 members = [
     "build",
+    "cmd/7z/macos",
     "cmd/docker",
     "cmd/firewallctl/linux",
     "cmd/grean",
@@ -14,7 +15,7 @@ members = [
     "cmd/rchmod",
     "cmd/renet/windows",
     "cmd/reviso",
-    "cmd/rmdss/darwin",
+    "cmd/rmdss/macos",
     "cmd/rmem",
     "cmd/sqlite",
     "cmd/unhide",
