@@ -4,6 +4,7 @@ members = [
     "build",
     "cmd/docker",
     "cmd/firewallctl/linux",
+    "cmd/grean",
     "cmd/hide",
     "cmd/open/linux",
     "cmd/open/windows",

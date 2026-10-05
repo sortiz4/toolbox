@@ -59,7 +59,7 @@ impl CliCommand for Command {
                 .wrap_algorithm(WrapAlgorithm::FirstFit)
         };
 
-        writeln!(&self.streams.stdout, "{}", fill(&input, options))?;
+        write!(&self.streams.stdout, "{}", fill(&input, options))?;
         return Ok(());
     }
 

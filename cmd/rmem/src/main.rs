@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::collections::HashSet;
 use std::env;
 use std::ffi::OsString;
 use std::fs;
@@ -54,6 +55,13 @@ impl CliCommand for Command {
     fn main(&mut self) -> Result<()> {
         let output = Mutex::new(&self.streams.stderr);
 
+        let roots = {
+            self.arguments.paths
+                .iter()
+                .filter_map(|path| fs::canonicalize(path).ok())
+                .collect::<HashSet<_>>()
+        };
+
         let remove = |entry: &DirEntry| -> Result<()> {
             if !entry.file_type().is_dir() {
                 return Ok(());
@@ -75,6 +83,10 @@ impl CliCommand for Command {
 
             if let Some(child) = contents.next() {
                 child?;
+                return Ok(());
+            }
+
+            if roots.contains(&fs::canonicalize(entry.path())?) {
                 return Ok(());
             }
 

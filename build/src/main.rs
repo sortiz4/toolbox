@@ -2,7 +2,6 @@ use clap::Parser;
 use std::env;
 use std::env::consts;
 use std::ffi::OsString;
-use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
@@ -15,32 +14,35 @@ use toolbox::error::Error;
 use toolbox::result::Result;
 
 const COMMANDS: &[&str] = &[
-    "docker",
+    "cmd/docker",
     #[cfg(target_os = "linux")]
-    "firewallctl",
-    "hide",
-    #[cfg(any(target_os = "linux", windows))]
-    "open",
-    "py",
-    "pyclean",
-    "python",
-    "rchmod",
+    "cmd/firewallctl/linux",
+    "cmd/grean",
+    "cmd/hide",
+    #[cfg(target_os = "linux")]
+    "cmd/open/linux",
     #[cfg(windows)]
-    "renet",
-    "reviso",
+    "cmd/open/windows",
+    "cmd/py",
+    "cmd/pyclean",
+    "cmd/python",
+    "cmd/rchmod",
+    #[cfg(windows)]
+    "cmd/renet/windows",
+    "cmd/reviso",
     #[cfg(target_os = "macos")]
-    "rmdss",
-    "rmem",
-    "sqlite",
-    "unhide",
-    "wrap",
+    "cmd/rmdss/darwin",
+    "cmd/rmem",
+    "cmd/sqlite",
+    "cmd/unhide",
+    "cmd/wrap",
 ];
 
 /// Build all tools supported on the current platform.
 #[derive(Parser)]
 #[command(name = "build", disable_help_flag = true, disable_version_flag = true)]
 struct Arguments {
-    /// Output directory; binaries go under OS-ARCH.
+    /// Output directory; binaries go under OS-ARCH/bin.
     #[arg(short, long, default_value = "dist")]
     output: PathBuf,
 
@@ -63,29 +65,6 @@ impl CliCommand for Command {
     type Error = Error;
 
     fn main(&mut self) -> Result<()> {
-        let package = |name: &&str| -> String {
-            return match *name {
-                "firewallctl" | "open" | "renet" => format!("toolbox-{name}-{}", consts::OS),
-                "rmdss" => String::from("toolbox-rmdss-darwin"),
-                _ => format!("toolbox-{name}"),
-            };
-        };
-
-        let packages = {
-            COMMANDS
-                .iter()
-                .map(package)
-                .collect::<Vec<_>>()
-                .join(" -p ")
-        };
-
-        let command = {
-            format!("cargo build --release --target-dir target -p {packages}")
-                .split(' ')
-                .map(OsString::from)
-                .collect::<Vec<_>>()
-        };
-
         let workspace = {
             Path::new(env!("CARGO_MANIFEST_DIR"))
                 .parent()
@@ -93,26 +72,30 @@ impl CliCommand for Command {
         };
 
         let output = workspace.join(&self.arguments.output).join(format!("{}-{}", consts::OS, consts::ARCH));
-        fs::create_dir_all(&output)?;
         writeln!(&self.streams.stderr, "Building tools for {}/{}", consts::OS, consts::ARCH)?;
 
-        let status = {
-            StdCommand::new(&command[0])
-                .current_dir(workspace)
-                .args(&command[1..])
-                .stdin(self.streams.stdin.to_stdio()?)
-                .stdout(self.streams.stdout.to_stdio()?)
-                .stderr(self.streams.stderr.to_stdio()?)
-                .status()?
-        };
+        for path in COMMANDS {
+            let command = {
+                format!("cargo install --target host-tuple --force --no-track --path {path} --root")
+                    .split(' ')
+                    .map(OsString::from)
+                    .chain([output.as_os_str().to_owned()])
+                    .collect::<Vec<_>>()
+            };
 
-        if !status.success() {
-            return Err(Error::other(format!("cargo build failed with {status}")));
-        }
+            let status = {
+                StdCommand::new(&command[0])
+                    .current_dir(workspace)
+                    .args(&command[1..])
+                    .stdin(self.streams.stdin.to_stdio()?)
+                    .stdout(self.streams.stdout.to_stdio()?)
+                    .stderr(self.streams.stderr.to_stdio()?)
+                    .status()?
+            };
 
-        for name in COMMANDS {
-            let filename = format!("{name}{}", consts::EXE_SUFFIX);
-            fs::copy(workspace.join("target/release").join(&filename), output.join(filename))?;
+            if !status.success() {
+                return Err(Error::other(format!("cargo install failed with {status}")));
+            }
         }
 
         return Ok(());

@@ -15,9 +15,9 @@ cargo run -p toolbox-build --
 ```
 
 That builds every command supported on your current OS and architecture and
-puts the executables in `dist/OS-ARCH/`, such as `dist/linux-x86_64/`. Add that
-folder to your `PATH`, or copy the executables wherever you keep your tools.
-Use `--output PATH` to choose a different base directory:
+puts the executables in `dist/OS-ARCH/bin/`, such as `dist/linux-x86_64/bin/`.
+Add that folder to your `PATH`, or copy the executables wherever you keep your
+tools. Use `--output PATH` to choose a different base directory:
 
 ```sh
 cargo run -p toolbox-build -- --output ./bin
@@ -28,13 +28,14 @@ cargo run -p toolbox-build -- --output ./bin
 | --- | --- | --- |
 | `docker` | Runs `podman`. | All |
 | `firewallctl` | Runs `firewall-cmd`. | Linux |
+| `grean` | Runs `grean` from `lib/grean-2.0.5/bin/` beside the wrapper. I update that path when needed. | All |
 | `hide` | Marks paths hidden on Windows; adds a leading dot to their names on Unix. | All |
 | `open` | Opens paths with their default application. | Linux, Windows |
 | `py`, `python` | Runs `python3`. | All |
 | `pyclean` | Removes Python cache directories and `.pyc`/`.pyo` files beneath the supplied roots. Defaults to the current directory. | All |
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
 | `renet` | Runs `ipconfig /flushdns`, `/release`, and `/renew`, even if an earlier step fails. | Windows |
-| `reviso` | Runs `reviso` beside its own executable. I update that path when needed. | All |
+| `reviso` | Runs `reviso` from `lib/reviso-2.1.0/bin/` beside the wrapper. I update that path when needed. | All |
 | `rmdss` | Removes `.DS_Store` files beneath the supplied roots. Defaults to the current directory. | MacOS |
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
 | `sqlite` | Runs `sqlite3`. | All |
@@ -43,8 +44,8 @@ cargo run -p toolbox-build -- --output ./bin
 
 The wrappers forward arguments, help, version, standard streams, and exit codes
 to their underlying commands. The other tools have `-h`/`--help` and
-`-v`/`--version` of their own. `rmem` and `rchmod` also have dry-run and verbose
-options, and prompt for absolute paths unless you pass `-s`/`--suppress`.
+`-v`/`--version` of their own. `rmem` and `rchmod` also have dry-run and
+verbose options, and prompt for absolute paths unless you pass `-s`/`--suppress`.
 
 You'll need the programs that the wrappers call installed separately. `pyclean`
 and `rmdss` need `fd` and `rm`; `rchmod` needs `chmod`. I usually have MSYS on
