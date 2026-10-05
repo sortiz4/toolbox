@@ -31,7 +31,7 @@ cargo run -p toolbox-build -- --output ./bin
 | `firewallctl` | Runs `firewall-cmd`. | Linux |
 | `grean` | Runs `grean` from `lib/grean-2.0.5/bin/` beside the wrapper. I update that path when needed. | All |
 | `hide` | Marks paths hidden on Windows; adds a leading dot to their names on Unix. | All |
-| `open` | Opens paths with their default application. | Linux, Windows |
+| `open` | Opens paths with their default application. Defaults to the current directory. | Linux, Windows |
 | `py`, `python` | Runs `python3`. | All |
 | `pyclean` | Removes Python cache directories and `.pyc`/`.pyo` files beneath the supplied roots. Defaults to the current directory. | All |
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
@@ -41,7 +41,7 @@ cargo run -p toolbox-build -- --output ./bin
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
 | `sqlite` | Runs `sqlite3`. | All |
 | `unhide` | Clears the hidden attribute on Windows; removes one leading dot from names on Unix. | All |
-| `wrap` | Wraps standard input at word boundaries. Defaults to 120 columns; use `-l`/`--length` to change it. | All |
+| `wrap` | Wraps standard input at word boundaries. Defaults to 120 columns. | All |
 
 The wrappers forward arguments, help, version, standard streams, and exit codes
 to their underlying commands. The other tools have `-h`/`--help` and
