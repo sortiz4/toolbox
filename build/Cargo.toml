@@ -1,0 +1,9 @@
+[package]
+name = "toolbox-build"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+clap.workspace = true
+toolbox.workspace = true

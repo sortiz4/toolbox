@@ -1,0 +1,13 @@
+[package]
+name = "toolbox-unhide"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "unhide"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+toolbox.workspace = true

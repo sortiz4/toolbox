@@ -1,0 +1,12 @@
+[package]
+name = "toolbox-sqlite"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "sqlite"
+path = "src/main.rs"
+
+[dependencies]
+toolbox.workspace = true

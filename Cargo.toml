@@ -1,0 +1,35 @@
+[workspace]
+resolver = "3"
+members = [
+    "build",
+    "cmd/docker",
+    "cmd/firewallctl/linux",
+    "cmd/hide",
+    "cmd/open/linux",
+    "cmd/open/windows",
+    "cmd/py",
+    "cmd/pyclean",
+    "cmd/python",
+    "cmd/rchmod",
+    "cmd/renet/windows",
+    "cmd/reviso",
+    "cmd/rmdss/darwin",
+    "cmd/rmem",
+    "cmd/sqlite",
+    "cmd/unhide",
+    "cmd/wrap",
+    "internal",
+]
+
+[workspace.package]
+license = "MIT"
+version = "2026.9.28"
+authors = ["Steven Ortiz"]
+
+[workspace.dependencies]
+clap = { version = "~4.6.7", features = ["derive"] }
+open = "~5.4.4"
+rayon = "~1.12.0"
+textwrap = "~0.16.4"
+toolbox = { path = "internal" }
+walkdir = "~2.5.0"

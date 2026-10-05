@@ -1,0 +1,12 @@
+[package]
+name = "toolbox-docker"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "docker"
+path = "src/main.rs"
+
+[dependencies]
+toolbox.workspace = true

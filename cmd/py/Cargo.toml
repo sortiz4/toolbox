@@ -1,0 +1,12 @@
+[package]
+name = "toolbox-py"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "py"
+path = "src/main.rs"
+
+[dependencies]
+toolbox.workspace = true

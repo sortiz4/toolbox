@@ -1,0 +1,13 @@
+[package]
+name = "toolbox-pyclean"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "pyclean"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+toolbox.workspace = true

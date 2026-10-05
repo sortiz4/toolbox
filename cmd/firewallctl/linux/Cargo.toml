@@ -1,0 +1,12 @@
+[package]
+name = "toolbox-firewallctl-linux"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "firewallctl"
+path = "src/main.rs"
+
+[dependencies]
+toolbox.workspace = true

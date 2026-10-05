@@ -1,0 +1,13 @@
+[package]
+name = "toolbox-rmdss-darwin"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "rmdss"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+toolbox.workspace = true

@@ -1,0 +1,14 @@
+[package]
+name = "toolbox-rmem"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "rmem"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+toolbox.workspace = true
+walkdir.workspace = true

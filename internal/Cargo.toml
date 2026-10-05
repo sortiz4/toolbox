@@ -1,0 +1,13 @@
+[package]
+name = "toolbox"
+edition = "2024"
+license.workspace = true
+version.workspace = true
+
+[dependencies]
+clap.workspace = true
+rayon.workspace = true
+walkdir.workspace = true
+
+[target.'cfg(any(target_os = "linux", windows))'.dependencies]
+open.workspace = true
