@@ -15,7 +15,7 @@ fn main() -> ExitCode {
         program: {
             executable
                 .with_file_name("lib")
-                .join("grean-2.0.5/bin/grean")
+                .join("grean-2.0.10/bin/grean")
                 .with_extension(consts::EXE_EXTENSION)
         },
         streams: Streams::default(),

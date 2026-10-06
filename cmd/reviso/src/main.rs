@@ -15,7 +15,7 @@ fn main() -> ExitCode {
         program: {
             executable
                 .with_file_name("lib")
-                .join("reviso-2.2.5/bin/reviso")
+                .join("reviso-2.2.10/bin/reviso")
                 .with_extension(consts::EXE_EXTENSION)
         },
         streams: Streams::default(),

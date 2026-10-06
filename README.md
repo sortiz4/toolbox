@@ -29,14 +29,14 @@ cargo run -p toolbox-build -- --output ./bin
 | `7z` | Runs `7zz`. | MacOS |
 | `docker` | Runs `podman`. | All |
 | `firewallctl` | Runs `firewall-cmd`. | Linux |
-| `grean` | Runs `grean` from `lib/grean-2.0.5/bin/` beside the wrapper. I update that path when needed. | All |
+| `grean` | Runs `grean` from `lib/grean-2.0.10/bin/` beside the wrapper. I update that path when needed. | All |
 | `hide` | Marks paths hidden on Windows; adds a leading dot to their names on Unix. | All |
 | `open` | Opens paths with their default application. Defaults to the current directory. | Linux, Windows |
 | `py`, `python` | Runs `python3`. | All |
 | `pyclean` | Removes Python cache directories and `.pyc`/`.pyo` files beneath the supplied roots. Defaults to the current directory. | All |
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
 | `renet` | Runs `ipconfig /flushdns`, `/release`, and `/renew`, even if an earlier step fails. | Windows |
-| `reviso` | Runs `reviso` from `lib/reviso-2.2.5/bin/` beside the wrapper. I update that path when needed. | All |
+| `reviso` | Runs `reviso` from `lib/reviso-2.2.10/bin/` beside the wrapper. I update that path when needed. | All |
 | `rmdss` | Removes `.DS_Store` files beneath the supplied roots. Defaults to the current directory. | MacOS |
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
 | `sqlite` | Runs `sqlite3`. | All |
