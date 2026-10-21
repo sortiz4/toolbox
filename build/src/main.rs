@@ -32,9 +32,8 @@ const COMMANDS: &[&str] = &[
     #[cfg(windows)]
     "cmd/renet/windows",
     "cmd/reviso",
-    #[cfg(target_os = "macos")]
-    "cmd/rmdss/macos",
     "cmd/rmem",
+    "cmd/rmmeta",
     "cmd/sqlite",
     "cmd/unhide",
     "cmd/wrap",

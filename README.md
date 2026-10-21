@@ -37,8 +37,8 @@ cargo run -p toolbox-build -- --output ./bin
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
 | `renet` | Runs `ipconfig /flushdns`, `/release`, and `/renew`, even if an earlier step fails. | Windows |
 | `reviso` | Runs `reviso` from `lib/reviso-2.2.10/bin/` beside the wrapper. I update that path when needed. | All |
-| `rmdss` | Removes `.DS_Store` files beneath the supplied roots. Defaults to the current directory. | MacOS |
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
+| `rmmeta` | Removes metadata created by native file explorers. Defaults to the current directory. | All |
 | `sqlite` | Runs `sqlite3`. | All |
 | `unhide` | Clears the hidden attribute on Windows; removes one leading dot from names on Unix. | All |
 | `wrap` | Wraps standard input at word boundaries. Defaults to 120 columns. | All |
@@ -49,6 +49,6 @@ to their underlying commands. The other tools have `-h`/`--help` and
 verbose options, and prompt for absolute paths unless you pass `-s`/`--suppress`.
 
 You'll need the programs that the wrappers call installed separately. `pyclean`
-and `rmdss` need `fd` and `rm`; `rchmod` needs `chmod`. I usually have MSYS on
-Windows for those Unix tools. `wrap` leaves long words intact, so some lines
-can exceed the requested width.
+needs `fd` and `rm`; `rchmod` needs `chmod`. I usually have MSYS on Windows for
+those Unix tools. `wrap` leaves long words intact, so some lines can exceed the
+requested width.

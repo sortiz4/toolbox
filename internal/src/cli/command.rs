@@ -126,7 +126,7 @@ pub trait Command {
     fn main(&mut self) -> StdResult<(), Self::Error>;
 
     fn confirm(&self, prompt: String) -> StdResult<bool, Self::Error> {
-        // Keep later prompt answers in the underlying stream.
+        // Keep later prompt answers in the underlying stream
         let mut input = BufReader::with_capacity(1, &self.streams().stdin);
 
         loop {
