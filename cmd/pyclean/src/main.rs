@@ -35,7 +35,7 @@ impl CliCommand for Command {
     type Error = Error;
 
     fn main(&mut self) -> Result<()> {
-        let clean = |path: &PathBuf| -> Result<()> {
+        let on_clean = |path: &PathBuf| -> Result<()> {
             let command = {
                 r"fd -HI --exclude=/System/Volumes/Data --exec-batch rm -rf ; -- (?:^__pycache__$|\.pyc$|\.pyo$)"
                     .split(' ')
@@ -47,7 +47,7 @@ impl CliCommand for Command {
             return self.run_process(&command, true);
         };
 
-        return Self::run_batch(&self.arguments.paths, Self::has_disjoint_roots(&self.arguments.paths), clean);
+        return Self::run_batch(&self.arguments.paths, Self::has_disjoint_roots(&self.arguments.paths), on_clean);
     }
 
     fn streams(&self) -> &Streams {

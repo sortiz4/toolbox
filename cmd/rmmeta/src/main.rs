@@ -98,7 +98,7 @@ impl CliCommand for Command {
     fn main(&mut self) -> Result<()> {
         let output = Mutex::new(&self.streams.stderr);
 
-        let remove = |entry: &DirEntry| -> Result<()> {
+        let on_remove = |entry: &DirEntry| -> Result<()> {
             if !entry.file_type().is_file() {
                 return Ok(());
             }
@@ -160,7 +160,7 @@ impl CliCommand for Command {
             };
 
             for level in levels.iter().rev() {
-                if let Err(error) = Self::run_batch(level, true, &remove) {
+                if let Err(error) = Self::run_batch(level, true, &on_remove) {
                     failures.push(error);
                 }
             }

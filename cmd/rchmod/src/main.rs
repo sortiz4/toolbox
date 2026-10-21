@@ -76,7 +76,7 @@ impl CliCommand for Command {
     fn main(&mut self) -> Result<()> {
         let output = Mutex::new(&self.streams.stdout);
 
-        let change = |entry: &DirEntry| -> ToolboxResult<()> {
+        let on_change = |entry: &DirEntry| -> ToolboxResult<()> {
             let mode = if entry.file_type().is_dir() {
                 self.arguments.dir.as_deref().unwrap_or("")
             } else {
@@ -137,7 +137,7 @@ impl CliCommand for Command {
             };
 
             for level in levels.iter().rev() {
-                if let Err(error) = Self::run_batch(level, true, &change) {
+                if let Err(error) = Self::run_batch(level, true, &on_change) {
                     failures.push(error);
                     break;
                 }
