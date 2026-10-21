@@ -13,8 +13,7 @@ use toolbox::result::Result;
 #[derive(Parser)]
 #[command(name = "pyclean", disable_help_flag = true, disable_version_flag = true)]
 struct Arguments {
-    /// Roots to clean (default: current directory).
-    #[arg(default_value = ".")]
+    /// Roots to clean.
     paths: Vec<PathBuf>,
 
     #[command(flatten)]

@@ -4,22 +4,35 @@ use std::ffi::OsString;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
+use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::ExitCode;
+use std::sync::Mutex;
 use toolbox::cli::command::Command as CliCommand;
 use toolbox::cli::command::Arguments as CliArguments;
 use toolbox::cli::stream::Streams;
 use toolbox::error::Error;
 use toolbox::result::Result;
-use walkdir::WalkDir;
+use walkdir::DirEntry;
 
 /// Removes metadata created by native file explorers.
 #[derive(Parser)]
 #[command(name = "rmmeta", disable_help_flag = true, disable_version_flag = true)]
 struct Arguments {
-    /// Roots to clean (default: current directory).
-    #[arg(default_value = ".")]
+    /// Do not remove files; show matching metadata files.
+    #[arg(short, long)]
+    dry_run: bool,
+
+    /// Suppress all prompts.
+    #[arg(short, long)]
+    suppress: bool,
+
+    /// Explain what is being done.
+    #[arg(short = 'V', long)]
+    verbose: bool,
+
+    /// Roots to clean.
     paths: Vec<PathBuf>,
 
     #[command(flatten)]
@@ -83,72 +96,81 @@ impl CliCommand for Command {
     type Error = Error;
 
     fn main(&mut self) -> Result<()> {
-        let clean = |path: &PathBuf| -> Result<()> {
-            let mut failures = Vec::new();
+        let output = Mutex::new(&self.streams.stderr);
 
-            let entries = {
-                WalkDir::new(path)
-                    .follow_root_links(false)
-                    .into_iter()
-                    .filter_entry(|entry| entry.path() != Path::new("/System/Volumes/Data"))
-            };
-
-            for entry in entries {
-                let entry = match entry {
-                    Ok(entry) => entry,
-
-                    Err(error) => {
-                        failures.push(Error::other(error.to_string()));
-                        continue;
-                    },
-                };
-
-                if !entry.file_type().is_file() {
-                    continue;
-                }
-
-                let name = entry.file_name().to_string_lossy();
-                let might_be_apple_double = name.starts_with("._");
-
-                let is_metadata = {
-                    name == ".DS_Store" ||
-                    name == ".directory" ||
-                    ["Thumbs.db", "ehthumbs.db", "ehthumbs_vista.db"].iter().any(|cache| name.eq_ignore_ascii_case(cache))
-                };
-
-                if !is_metadata && !might_be_apple_double {
-                    continue;
-                }
-
-                let file = entry.path();
-
-                let clean_entry = || -> Result<()> {
-                    // Recheck the type before reading or removing a candidate
-                    if !fs::symlink_metadata(file)?.file_type().is_file() {
-                        return Ok(());
-                    }
-
-                    if might_be_apple_double && !Self::is_apple_double(file)? {
-                        return Ok(());
-                    }
-
-                    fs::remove_file(file)?;
-                    return Ok(());
-                };
-
-                if let Err(error) = clean_entry() {
-                    failures.push(Error::other(format!("{}: {error}", file.display())));
-                }
-            }
-
-            if failures.is_empty() {
+        let remove = |entry: &DirEntry| -> Result<()> {
+            if !entry.file_type().is_file() {
                 return Ok(());
             }
 
-            return Err(Error::from(failures));
+            let name = entry.file_name().to_string_lossy();
+            let might_be_apple_double = name.starts_with("._");
+
+            let is_metadata = {
+                name == ".DS_Store" ||
+                name == ".directory" ||
+                ["Thumbs.db", "ehthumbs.db", "ehthumbs_vista.db"].iter().any(|cache| name.eq_ignore_ascii_case(cache))
+            };
+
+            if !is_metadata && !might_be_apple_double {
+                return Ok(());
+            }
+
+            let file = entry.path();
+
+            if might_be_apple_double && !Self::is_apple_double(file)? {
+                return Ok(());
+            }
+
+            let message = if self.arguments.dry_run {
+                "Will remove"
+            } else {
+                fs::remove_file(file).map_err(|error| Error::other(format!("remove {:?}: {error}", file)))?;
+                "Removed"
+            };
+
+            if self.arguments.dry_run || self.arguments.verbose {
+                let mut stderr = output.lock().unwrap();
+                writeln!(*stderr, "{message}: {}", file.display())?;
+            }
+
+            return Ok(());
         };
 
-        return Self::run_batch(&self.arguments.paths, Self::has_disjoint_roots(&self.arguments.paths), clean);
+        let mut failures = Vec::new();
+
+        for root in &self.arguments.paths {
+            if root.is_absolute() && !self.arguments.suppress && !self.confirm(format!("{:?} is absolute", root))? {
+                if self.arguments.verbose {
+                    writeln!(&self.streams.stderr, "Skipped.")?;
+                }
+
+                continue;
+            }
+
+            let levels = match Self::levels(root) {
+                Ok(levels) => {
+                    levels
+                },
+
+                Err(error) => {
+                    failures.push(error.into());
+                    continue;
+                },
+            };
+
+            for level in levels.iter().rev() {
+                if let Err(error) = Self::run_batch(level, true, &remove) {
+                    failures.push(error);
+                }
+            }
+        }
+
+        if failures.is_empty() {
+            return Ok(());
+        }
+
+        return Err(Error::from(failures));
     }
 
     fn streams(&self) -> &Streams {
