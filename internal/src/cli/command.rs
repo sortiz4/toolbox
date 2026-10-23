@@ -42,55 +42,6 @@ pub trait Command {
     type Arguments: Parser;
     type Error: StdError + From<IoError> + From<Error>;
 
-    fn levels(root: &Path) -> IoResult<Vec<Vec<DirEntry>>> {
-        let mut levels: Vec<Vec<DirEntry>> = Vec::new();
-
-        let on_traversal_error = |error: walkdir::Error, parent: &Path| -> IoResult<()> {
-            let kind = error.io_error().map(|error| error.kind()).unwrap_or(ErrorKind::Other);
-            let error = IoError::new(kind, format!("unable to access {:?}: {error}", error.path().unwrap_or(parent)));
-
-            if kind == ErrorKind::TimedOut {
-                writeln!(std::io::stderr(), "Warning: {error}")?;
-                return Ok(());
-            }
-
-            return Err(error);
-        };
-
-        for entry in WalkDir::new(root).follow_root_links(false).sort_by_file_name() {
-            let entry = match entry {
-                Ok(entry) => entry,
-
-                Err(error) => {
-                    // Directory iteration errors may omit the path; recover the parent from its depth
-                    let parent = {
-                        error.depth()
-                            .checked_sub(1)
-                            .and_then(|depth| levels.get(depth))
-                            .and_then(|level| level.last())
-                            .map(|entry| entry.path())
-                            .unwrap_or(root)
-                    };
-
-                    on_traversal_error(error, parent)?;
-                    continue;
-                },
-            };
-
-            if !entry.file_type().is_dir() && !entry.file_type().is_file() {
-                continue;
-            }
-
-            if levels.len() <= entry.depth() {
-                levels.resize_with(entry.depth() + 1, Vec::new);
-            }
-
-            levels[entry.depth()].push(entry);
-        }
-
-        return Ok(levels);
-    }
-
     fn run_batch<T, F>(items: &[T], parallelize: bool, on_item: F) -> Result<()> where T: Sync, F: Fn(&T) -> Result<()> + Sync + Send {
         let failures = if parallelize && items.len() > 1 {
             items.par_iter().filter_map(|item| on_item(item).err()).collect::<Vec<_>>()
@@ -153,6 +104,47 @@ pub trait Command {
     }
 
     fn main(&mut self) -> StdResult<(), Self::Error>;
+
+    fn levels(&self, root: &Path) -> IoResult<Vec<Vec<DirEntry>>> {
+        let mut levels: Vec<Vec<DirEntry>> = Vec::new();
+
+        let on_traversal_error = |error: walkdir::Error, parent: &Path| {
+            let _ = writeln!(&self.streams().stderr, "Warning: unable to access {:?}: {error}", error.path().unwrap_or(parent));
+        };
+
+        for entry in WalkDir::new(root).follow_root_links(false).sort_by_file_name() {
+            let entry = match entry {
+                Ok(entry) => entry,
+
+                Err(error) => {
+                    // Directory iteration errors may omit the path; recover the parent from its depth
+                    let parent = {
+                        error.depth()
+                            .checked_sub(1)
+                            .and_then(|depth| levels.get(depth))
+                            .and_then(|level| level.last())
+                            .map(|entry| entry.path())
+                            .unwrap_or(root)
+                    };
+
+                    on_traversal_error(error, parent);
+                    continue;
+                },
+            };
+
+            if !entry.file_type().is_dir() && !entry.file_type().is_file() {
+                continue;
+            }
+
+            if levels.len() <= entry.depth() {
+                levels.resize_with(entry.depth() + 1, Vec::new);
+            }
+
+            levels[entry.depth()].push(entry);
+        }
+
+        return Ok(levels);
+    }
 
     fn confirm(&self, prompt: String) -> StdResult<bool, Self::Error> {
         // Keep later prompt answers in the underlying stream

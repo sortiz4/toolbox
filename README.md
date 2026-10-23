@@ -33,21 +33,19 @@ cargo run -p toolbox-build -- --output ./bin
 | `hide` | Marks paths hidden on Windows; adds a leading dot to their names on Unix. | All |
 | `open` | Opens paths with their default application. Defaults to the current directory. | Linux, Windows |
 | `py`, `python` | Runs `python3`. | All |
-| `pyclean` | Removes Python cache directories and `.pyc`/`.pyo` files beneath the supplied roots. | All |
+| `pyclean` | Removes Python cache directories and `.pyc` and `.pyo` files beneath the supplied roots. | All |
 | `rchmod` | Changes file and directory modes recursively, with separate `--file` and `--dir` modes. | All |
 | `renet` | Runs `ipconfig /flushdns`, `/release`, and `/renew`, even if an earlier step fails. | Windows |
 | `reviso` | Runs `reviso` from `lib/reviso-2.2.10/bin/` beside the wrapper. I update that path when needed. | All |
 | `rmem` | Removes empty directories recursively, preserving each supplied root. | All |
-| `rmmeta` | Removes metadata created by native file explorers. | All |
+| `rmmd` | Removes metadata created by native file explorers. | All |
 | `sqlite` | Runs `sqlite3`. | All |
 | `unhide` | Clears the hidden attribute on Windows; removes one leading dot from names on Unix. | All |
 | `wrap` | Wraps standard input at word boundaries. Defaults to 120 columns. | All |
 
 The wrappers forward arguments, help, version, standard streams, and exit codes
-to their underlying commands. The other tools have `-h`/`--help` and
-`-v`/`--version` of their own. `rmem`, `rmmeta`, and `rchmod` also have dry-run
-and verbose options, and prompt for absolute paths unless you pass
-`-s`/`--suppress`.
+to their underlying commands. The other tools have `--help` and `--version` of
+their own. `rchmod`, `rmem`, and `rmmd` also have dry-run and verbose options.
 
 You'll need the programs that the wrappers call installed separately. `pyclean`
 needs `fd` and `rm`; `rchmod` needs `chmod`. I usually have MSYS on Windows for

@@ -23,10 +23,6 @@ struct Arguments {
     #[arg(short, long)]
     dry_run: bool,
 
-    /// Suppress all prompts.
-    #[arg(short, long)]
-    suppress: bool,
-
     /// Explain what is being done.
     #[arg(short = 'V', long)]
     verbose: bool,
@@ -108,15 +104,7 @@ impl CliCommand for Command {
         let mut failures = Vec::new();
 
         for root in &self.arguments.paths {
-            if root.is_absolute() && !self.arguments.suppress && !self.confirm(format!("{:?} is absolute", root))? {
-                if self.arguments.verbose {
-                    writeln!(&self.streams.stderr, "Skipped.")?;
-                }
-
-                continue;
-            }
-
-            let levels = match Self::levels(root) {
+            let levels = match self.levels(root) {
                 Ok(levels) => {
                     levels
                 },

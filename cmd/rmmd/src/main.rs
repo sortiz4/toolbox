@@ -18,15 +18,11 @@ use walkdir::DirEntry;
 
 /// Removes metadata created by native file explorers.
 #[derive(Parser)]
-#[command(name = "rmmeta", disable_help_flag = true, disable_version_flag = true)]
+#[command(name = "rmmd", disable_help_flag = true, disable_version_flag = true)]
 struct Arguments {
     /// Do not remove files; show matching metadata files.
     #[arg(short, long)]
     dry_run: bool,
-
-    /// Suppress all prompts.
-    #[arg(short, long)]
-    suppress: bool,
 
     /// Explain what is being done.
     #[arg(short = 'V', long)]
@@ -140,15 +136,7 @@ impl CliCommand for Command {
         let mut failures = Vec::new();
 
         for root in &self.arguments.paths {
-            if root.is_absolute() && !self.arguments.suppress && !self.confirm(format!("{:?} is absolute", root))? {
-                if self.arguments.verbose {
-                    writeln!(&self.streams.stderr, "Skipped.")?;
-                }
-
-                continue;
-            }
-
-            let levels = match Self::levels(root) {
+            let levels = match self.levels(root) {
                 Ok(levels) => {
                     levels
                 },

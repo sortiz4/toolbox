@@ -16,7 +16,7 @@ members = [
     "cmd/renet/windows",
     "cmd/reviso",
     "cmd/rmem",
-    "cmd/rmmeta",
+    "cmd/rmmd",
     "cmd/sqlite",
     "cmd/unhide",
     "cmd/wrap",
@@ -25,7 +25,7 @@ members = [
 
 [workspace.package]
 license = "MIT"
-version = "2026.9.28"
+version = "2026.10.22"
 authors = ["Steven Ortiz"]
 
 [workspace.dependencies]

@@ -44,10 +44,6 @@ struct Arguments {
     #[arg(short = 'D', long)]
     dry_run: bool,
 
-    /// Suppress all prompts.
-    #[arg(short, long)]
-    suppress: bool,
-
     /// Explain what is being done.
     #[arg(short = 'V', long)]
     verbose: bool,
@@ -119,15 +115,7 @@ impl CliCommand for Command {
         let mut failures = Vec::new();
 
         for path in &self.arguments.paths {
-            if path.is_absolute() && !self.arguments.suppress && !self.confirm(format!("{:?} is absolute", path))? {
-                if self.arguments.verbose {
-                    writeln!(&self.streams.stderr, "Skipped.")?;
-                }
-
-                continue;
-            }
-
-            let levels = match Self::levels(path) {
+            let levels = match self.levels(path) {
                 Ok(levels) => levels,
 
                 Err(error) => {
@@ -139,7 +127,6 @@ impl CliCommand for Command {
             for level in levels.iter().rev() {
                 if let Err(error) = Self::run_batch(level, true, &on_change) {
                     failures.push(error);
-                    break;
                 }
             }
         }

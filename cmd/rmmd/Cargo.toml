@@ -1,11 +1,11 @@
 [package]
-name = "toolbox-rmmeta"
+name = "toolbox-rmmd"
 edition = "2024"
 license.workspace = true
 version.workspace = true
 
 [[bin]]
-name = "rmmeta"
+name = "rmmd"
 path = "src/main.rs"
 
 [dependencies]

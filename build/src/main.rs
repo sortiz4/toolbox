@@ -33,7 +33,7 @@ const COMMANDS: &[&str] = &[
     "cmd/renet/windows",
     "cmd/reviso",
     "cmd/rmem",
-    "cmd/rmmeta",
+    "cmd/rmmd",
     "cmd/sqlite",
     "cmd/unhide",
     "cmd/wrap",
